@@ -35,9 +35,46 @@ Successfully built a Machine Learning model to predict thermal runaway severity 
 
 ---
 
-## Implementation Pipeline
+## Implementation Architecture
+
+The project uses a **modular architecture** for easier debugging, testing, and maintenance:
+
+### Module Structure
+
+1. **data_cleaning.py** (158 lines)
+   - Load Excel dataset
+   - Type conversion and validation
+   - Missing value imputation
+   - Data quality visualizations
+
+2. **feature_engineering.py** (254 lines)
+   - Physics-based feature creation
+   - Categorical encoding
+   - Correlation analysis
+   - Feature distribution visualizations
+
+3. **model_training.py** (68 lines)
+   - Train/test split (80/20)
+   - Random Forest configuration
+   - Overfitting prevention
+
+4. **evaluation.py** (424 lines)
+   - Performance metrics calculation
+   - Prediction and residual plots
+   - Feature importance analysis
+   - Technical summary generation
+
+5. **main.py** (93 lines)
+   - Pipeline orchestration
+   - End-to-end execution
+
+---
+
+## Implementation Details
 
 ### 1. Data Cleaning & Preprocessing
+
+**Module:** `data_cleaning.py`
 
 **Challenges Addressed:**
 - Mixed data types: Voltage and thickness stored as `object` type
@@ -55,12 +92,19 @@ df['Pre-Test-Cell-Open-Circuit-Voltage-V'] = pd.to_numeric(
 df[col].fillna(df[col].median(), inplace=True)
 ```
 
+**Visualizations Generated:**
+- Data quality overview (missing values, data types)
+- Target distribution (histogram, box plot, Q-Q plot)
+- Summary statistics table
+
 **Results:**
 - Cleaned 365 rows, retained all samples (no zero/missing targets)
 - Successfully converted all numeric features
 - Whitespace cleaned from `Cell-Description` column
 
 ### 2. Feature Engineering
+
+**Module:** `feature_engineering.py`
 
 Created physics-based feature combining capacity and state of charge:
 
@@ -69,6 +113,11 @@ df['Stored_Energy_Wh'] = df['Cell-Capacity-Ah'] * df['Pre-Test-Cell-Open-Circuit
 ```
 
 **Rationale:** Battery energy storage follows E = Q × V, making this the fundamental risk driver from first principles.
+
+**Visualizations Generated:**
+- Correlation matrix heatmap (all features + target)
+- Feature distributions (histograms with mean/median)
+- Feature vs target scatter plots (with correlation values)
 
 **Result:** This engineered feature became the **most important predictor** (69.2% importance), validating the physics-based approach.
 
@@ -87,6 +136,8 @@ One-Hot encoded categorical variables:
 
 ### 4. Model Training
 
+**Module:** `model_training.py`
+
 **Algorithm:** Random Forest Regressor
 
 **Hyperparameters (Overfitting Prevention):**
@@ -101,6 +152,21 @@ RandomForestRegressor(
 ```
 
 **Train/Test Split:** 80/20 (292 training, 73 testing)
+
+### 5. Model Evaluation
+
+**Module:** `evaluation.py`
+
+**Visualizations Generated:**
+- Prediction plots (actual vs predicted for train & test)
+- Residual analysis (scatter plots + distributions)
+- Metrics comparison table
+- Feature importance chart (top 15 features)
+
+**Analysis Outputs:**
+- Performance metrics CSV
+- Feature importance rankings CSV
+- Technical summary with safety insights
 
 ---
 
@@ -223,35 +289,123 @@ Based on model findings, the following risk mitigation strategies are recommende
 
 ---
 
+## Visualization Outputs
+
+The enhanced modular pipeline generates **15 comprehensive outputs** organized in the `output/` directory:
+
+### Data Cleaning Visualizations (output/data_cleaning/)
+
+**1. Data Quality Overview** (`01_data_quality_overview.png`)
+- Missing values analysis: Bar chart of top 20 columns with missing data
+- Data types distribution: Pie chart showing object vs numeric columns
+- Purpose: Assess data completeness and identify cleaning needs
+
+**2. Target Distribution Analysis** (`02_target_distribution.png`)
+- Histogram: Energy yield distribution with mean/median markers
+- Box plot: Outlier detection and quartile visualization
+- Q-Q plot: Normality assessment for model assumptions
+- Purpose: Understand target variable characteristics
+
+**3. Summary Statistics Table** (`03_summary_table.png` + `target_statistics.csv`)
+- Count, Mean, Std Dev, Min, 25%, Median, 75%, Max
+- Both visual table and CSV format
+- Purpose: Quantitative summary for reporting
+
+### Feature Engineering Visualizations (output/feature_engineering/)
+
+**4. Correlation Matrix** (`01_correlation_matrix.png`)
+- Heatmap of all numeric features + target
+- Color-coded: Red (positive), Blue (negative)
+- Purpose: Identify multicollinearity and strong predictors
+
+**5. Feature Distributions** (`02_feature_distributions.png`)
+- Grid of histograms for all numeric features
+- Mean (red) and median (orange) markers
+- Purpose: Check for skewness, outliers, normality
+
+**6. Feature vs Target Scatter Plots** (`03_feature_vs_target.png`)
+- Individual scatter plots with correlation coefficients
+- Purpose: Visualize relationships and linearity
+
+**7. Feature Summary Table** (`feature_summary.csv`)
+- Count, Mean, Std, Min, Max, Missing for each feature
+- Purpose: Numerical reference for feature characteristics
+
+### Model Evaluation Visualizations (output/evaluation/)
+
+**8. Prediction Plots** (`01_prediction_plots.png`)
+- Training set: Actual vs Predicted with R² and RMSE
+- Testing set: Actual vs Predicted with R² and RMSE
+- Perfect fit reference line (red dashed)
+- Purpose: Assess prediction accuracy visually
+
+**9. Residual Analysis** (`02_residual_analysis.png`)
+- Residual scatter plots (train & test)
+- Residual distribution histograms (train & test)
+- Purpose: Validate model assumptions (homoscedasticity, normality)
+
+**10. Metrics Comparison Table** (`03_metrics_table.png` + `metrics_comparison.csv`)
+- RMSE, MAE, R² for training vs testing
+- Visual table and CSV format
+- Purpose: Quick performance overview
+
+**11. Feature Importance Chart** (`04_feature_importance.png`)
+- Horizontal bar chart of top 15 features
+- Color-coded by importance
+- Numerical values labeled
+- Purpose: Identify key risk drivers
+
+**12. Feature Importance Data** (`feature_importance.csv`)
+- All features with importance scores
+- Sorted by descending importance
+- Purpose: Complete ranking for analysis
+
+### Visualization Benefits
+
+- **Debugging:** Each pipeline step can be visually validated
+- **Communication:** Publication-quality figures (300 DPI)
+- **Analysis:** CSV files for further statistical analysis
+- **Documentation:** Complete audit trail of model development
+
+---
+
 ## Files Generated
 
-### 1. Python Script
-[battery_thermal_runaway_prediction.py](file:///home/harshit/rvce/sem 7/emobility/el/battery_thermal_runaway_prediction.py)
+### Modular Python Pipeline
 
-Complete ML pipeline implementing:
-- Data loading from Excel
-- Data cleaning and type conversion
-- Feature engineering (Stored_Energy_Wh)
-- One-hot encoding
-- Random Forest training with overfitting prevention
-- Comprehensive evaluation metrics
-- Automated feature importance analysis
-- Technical safety insights generation
+**Main Orchestrator:**
+- [main.py](file:///home/harshit/rvce/sem 7/emobility/el/main.py) - Executes complete pipeline
+
+**Core Modules:**
+- [data_cleaning.py](file:///home/harshit/rvce/sem 7/emobility/el/data_cleaning.py) - Data loading and preprocessing
+- [feature_engineering.py](file:///home/harshit/rvce/sem 7/emobility/el/feature_engineering.py) - Feature creation and encoding
+- [model_training.py](file:///home/harshit/rvce/sem 7/emobility/el/model_training.py) - Model training
+- [evaluation.py](file:///home/harshit/rvce/sem 7/emobility/el/evaluation.py) - Performance evaluation
+
+**Legacy Script:**
+- [battery_thermal_runaway_prediction.py](file:///home/harshit/rvce/sem 7/emobility/el/battery_thermal_runaway_prediction.py) - Original monolithic version
 
 **Execution:**
 ```bash
+# Run modular pipeline (recommended)
 cd "/home/harshit/rvce/sem 7/emobility/el"
+python3 main.py
+
+# Or run legacy monolithic script
 python3 battery_thermal_runaway_prediction.py
 ```
 
-### 2. Feature Importance Visualization
-[feature_importance.png](file:///home/harshit/rvce/sem 7/emobility/el/feature_importance.png)
+### Output Directory
 
-Professional horizontal bar chart showing:
-- Top 15 features ranked by importance
-- Color-coded visualization (viridis colormap)
-- Numeric importance values labeled on bars
-- Publication-quality 300 DPI resolution
+[output/](file:///home/harshit/rvce/sem 7/emobility/el/output/) - All visualizations and analysis files
+
+**Structure:**
+- `data_cleaning/` - 3 PNG + 1 CSV (data quality analysis)
+- `feature_engineering/` - 3 PNG + 1 CSV (feature analysis)
+- `evaluation/` - 4 PNG + 2 CSV (model performance)
+- `README.md` - Complete output documentation
+
+See [output/README.md](file:///home/harshit/rvce/sem 7/emobility/el/output/README.md) for detailed descriptions of all visualizations.
 
 ---
 
