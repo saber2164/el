@@ -1,9 +1,7 @@
 # Battery Thermal Runaway Severity Prediction
 ## Technical Report
 
-**Author:** Battery Safety ML Pipeline  
-**Date:** December 2025  
-**Status:** Completed  
+
 
 ---
 
