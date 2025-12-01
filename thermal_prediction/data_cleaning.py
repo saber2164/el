@@ -142,7 +142,7 @@ def handle_missing_values(df, numeric_features):
     return df
 
 
-def visualize_data_quality(df, output_dir='output/data_cleaning'):
+def visualize_data_quality(df, output_dir='../output/data_cleaning'):
     """
     Create visualizations for data quality assessment.
     
@@ -222,7 +222,7 @@ def visualize_data_quality(df, output_dir='output/data_cleaning'):
         print(f"  → Saved: {output_dir}/02_target_distribution.png")
 
 
-def create_data_summary_table(df, target_col='Corrected-Total-Energy-Yield-kJ', output_dir='output/data_cleaning'):
+def create_data_summary_table(df, target_col='Corrected-Total-Energy-Yield-kJ', output_dir='../output/data_cleaning'):
     """
     Create summary statistics table.
     

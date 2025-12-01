@@ -83,7 +83,7 @@ def encode_categorical_features(df, feature_cols):
     return df_encoded
 
 
-def visualize_features(df, feature_cols, target_col='Corrected-Total-Energy-Yield-kJ', output_dir='output/feature_engineering'):
+def visualize_features(df, feature_cols, target_col='Corrected-Total-Energy-Yield-kJ', output_dir='../output/feature_engineering'):
     """
     Create visualizations for feature analysis.
     
@@ -175,7 +175,7 @@ def visualize_features(df, feature_cols, target_col='Corrected-Total-Energy-Yiel
         print(f"  → Saved: {output_dir}/03_feature_vs_target.png")
 
 
-def create_feature_summary_table(df, feature_cols, output_dir='output/feature_engineering'):
+def create_feature_summary_table(df, feature_cols, output_dir='../output/feature_engineering'):
     """
     Create summary table for features.
     

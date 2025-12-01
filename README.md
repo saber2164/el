@@ -19,35 +19,60 @@ Predict the total heat energy released during battery thermal runaway based on:
 
 ```bash
 # Run the complete ML pipeline with visualizations
+cd thermal_prediction
 python3 main.py
 ```
 
-**Note:** Requires the NREL Battery Failure Databank dataset (`battery-failure-databank-revision2-feb24.xlsx`)
+**Requirements:** Dataset in `data/battery-failure-databank-revision2-feb24.xlsx`
+
+## Project Structure
+
+```
+.
+├── thermal_prediction/     # ML pipeline code
+│   ├── main.py            # Main orchestrator
+│   ├── data_cleaning.py   # Data preprocessing
+│   ├── feature_engineering.py
+│   ├── model_training.py
+│   └── evaluation.py
+├── safety_optimizer_algo/ # BMS safety deployment tool
+│   ├── models/            # Trained model files
+│   ├── safety_optimizer.py # Core optimizer class
+│   ├── app.py            # Streamlit web interface
+│   └── README.md
+├── data/                  # Dataset files
+│   └── battery-failure-databank-revision2-feb24.xlsx
+├── output/                # Generated visualizations & results
+│   ├── data_cleaning/
+│   ├── feature_engineering/
+│   └── evaluation/
+└── README.md             # This file
+```
 
 ## Modular Architecture
 
 The pipeline is split into separate modules for easier debugging and maintenance:
 
-### Core Modules
+### Core Modules (thermal_prediction/)
 
-1. **data_cleaning.py** - Data loading, type conversion, filtering, missing value handling
+1. **main.py** - Orchestrates the complete pipeline
+
+2. **data_cleaning.py** - Data loading, type conversion, filtering, missing value handling
    - Visualizations: Data quality overview, target distributions, Q-Q plots
    
-2. **feature_engineering.py** - Feature creation and encoding
+3. **feature_engineering.py** - Feature creation and encoding
    - Visualizations: Correlation matrix, feature distributions, scatter plots
    
-3. **model_training.py** - Train/test split and Random Forest training
+4. **model_training.py** - Train/test split and Random Forest training
    - Configuration with overfitting prevention
    
-4. **evaluation.py** - Model evaluation and performance analysis
+5. **evaluation.py** - Model evaluation and performance analysis
    - Visualizations: Prediction plots, residual analysis, metrics tables
-   
-5. **main.py** - Orchestrates the complete pipeline
 
 ### Legacy Files
 
-- `battery_thermal_runaway_prediction.py` - Original monolithic script (legacy)
-- `battery_thermal_runaway_walkthrough.md` - Detailed technical documentation
+- `thermal_prediction/battery_thermal_runaway_prediction.py` - Original monolithic script (reference)
+- `battery_thermal_runaway_walkthrough.md` - Detailed technical report
 
 ## Output Structure
 
@@ -100,6 +125,30 @@ Or install from requirements:
 - `output/README.md` - Detailed output documentation
 - `VISUALIZATION_SUMMARY.md` - Quick visualization reference
 - `battery_thermal_runaway_walkthrough.md` - Complete technical walkthrough
+- `safety_optimizer_algo/README.md` - Safety deployment tool documentation
+
+## Safety Deployment Tool
+
+The project includes a **Battery Safety Optimizer** for BMS integration:
+
+**Location:** `safety_optimizer_algo/`
+
+**Features:**
+- Calculate maximum safe voltage limits
+- Real-time risk prediction
+- Streamlit web interface with dual input controls (slider + manual entry)
+- Risk gauge with Green/Yellow/Red zones
+- Safety boundary visualization
+
+**Quick Start:**
+```bash
+cd safety_optimizer_algo
+streamlit run app.py
+```
+
+Access at: http://localhost:8502
+
+See `safety_optimizer_algo/README.md` for full documentation.
 
 ## License
 

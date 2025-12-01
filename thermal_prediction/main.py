@@ -35,7 +35,7 @@ def main():
     print("\nLoading NREL Battery Failure Databank dataset...")
     
     # Configuration
-    DATASET_PATH = 'battery-failure-databank-revision2-feb24.xlsx'
+    DATASET_PATH = '../data/battery-failure-databank-revision2-feb24.xlsx'
     TARGET_COL = 'Corrected-Total-Energy-Yield-kJ'
     
     # Step 1: Data Cleaning
@@ -59,34 +59,71 @@ def main():
     )
     
     # Step 5: Model Evaluation
-    metrics = evaluate_model(model, X_train, X_test, y_train, y_test, output_dir='output/evaluation')
+    metrics = evaluate_model(model, X_train, X_test, y_train, y_test, output_dir='../output/evaluation')
     
     # Step 6: Feature Importance Analysis
-    feature_importance = analyze_feature_importance(model, X.columns, output_dir='output/evaluation')
+    feature_importance = analyze_feature_importance(model, X.columns, output_dir='../output/evaluation')
     
     # Step 7: Generate Visualizations
-    plot_feature_importance(feature_importance, output_path='output/evaluation/04_feature_importance.png', top_n=15)
+    plot_feature_importance(feature_importance, output_path='../output/evaluation/04_feature_importance.png', top_n=15)
     
     # Also save to root for backward compatibility
-    plot_feature_importance(feature_importance, output_path='feature_importance.png', top_n=15)
+    plot_feature_importance(feature_importance, output_path='../feature_importance.png', top_n=15)
     
     # Step 8: Technical Summary
     numeric_features = ['Cell-Capacity-Ah', 'Pre-Test-Cell-Open-Circuit-Voltage-V', 
                        'Cell-Casing-Thickness-µm', 'Stored_Energy_Wh']
     generate_technical_summary(feature_importance, metrics, df, TARGET_COL, numeric_features)
     
+    # Step 9: Save Model for Deployment
+    print("\n" + "="*80)
+    print("SAVING MODEL FOR DEPLOYMENT")
+    print("="*80)
+    
+    import joblib
+    import os
+    
+    model_dir = '../safety_optimizer_algo/models'
+    os.makedirs(model_dir, exist_ok=True)
+    
+    # Save trained model
+    model_path = os.path.join(model_dir, 'rf_model.joblib')
+    joblib.dump(model, model_path)
+    print(f"✓ Saved Random Forest model: {model_path}")
+    
+    # Save model metadata (feature names and configuration)
+    metadata = {
+        'feature_names': list(X.columns),
+        'target_col': TARGET_COL,
+        'n_features': len(X.columns),
+        'model_type': 'RandomForestRegressor',
+        'train_samples': len(X_train),
+        'test_samples': len(X_test),
+        'test_r2': metrics['test_r2'],
+        'test_rmse': metrics['test_rmse']
+    }
+    metadata_path = os.path.join(model_dir, 'model_metadata.joblib')
+    joblib.dump(metadata, metadata_path)
+    print(f"✓ Saved model metadata: {metadata_path}")
+    print(f"  - Features: {len(X.columns)}")
+    print(f"  - Test R²: {metrics['test_r2']:.3f}")
+    print(f"  - Test RMSE: {metrics['test_rmse']:.3f} kJ")
+    
     # Summary
     print("\n" + "="*80)
     print("MODEL TRAINING COMPLETED SUCCESSFULLY")
     print("="*80)
     print(f"\nOutputs generated:")
-    print(f"  1. Data Cleaning: output/data_cleaning/")
+    print(f"  1. Data Cleaning: ../output/data_cleaning/")
     print(f"     - Data quality overview, target distributions, summary statistics")
-    print(f"  2. Feature Engineering: output/feature_engineering/")
+    print(f"  2. Feature Engineering: ../output/feature_engineering/")
     print(f"     - Correlation matrix, feature distributions, feature vs target plots")
-    print(f"  3. Model Evaluation: output/evaluation/")
+    print(f"  3. Model Evaluation: ../output/evaluation/")
     print(f"     - Prediction plots, residual analysis, metrics comparison, feature importance")
+    print(f"  4. Deployed Models: ../safety_optimizer_algo/models/")
+    print(f"     - rf_model.joblib, model_metadata.joblib")
     print(f"\n  Model Performance: RMSE = {metrics['test_rmse']:.3f} kJ, R² = {metrics['test_r2']:.3f}")
+    print(f"  Model ready for deployment in safety_optimizer_algo/")
     print("="*80)
 
 

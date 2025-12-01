@@ -17,7 +17,7 @@ sns.set_style("whitegrid")
 plt.rcParams['figure.figsize'] = (10, 6)
 
 
-def evaluate_model(model, X_train, X_test, y_train, y_test, output_dir='output/evaluation'):
+def evaluate_model(model, X_train, X_test, y_train, y_test, output_dir='../output/evaluation'):
     """
     Evaluate model performance on training and testing sets with visualizations.
     
@@ -83,7 +83,7 @@ def evaluate_model(model, X_train, X_test, y_train, y_test, output_dir='output/e
     return metrics
 
 
-def visualize_predictions(y_train, y_train_pred, y_test, y_test_pred, metrics, output_dir='output/evaluation'):
+def visualize_predictions(y_train, y_train_pred, y_test, y_test_pred, metrics, output_dir='../output/evaluation'):
     """
     Create prediction visualization plots.
     
@@ -125,7 +125,7 @@ def visualize_predictions(y_train, y_train_pred, y_test, y_test_pred, metrics, o
     print(f"  → Saved: {output_dir}/01_prediction_plots.png")
 
 
-def visualize_residuals(y_train, y_train_pred, y_test, y_test_pred, output_dir='output/evaluation'):
+def visualize_residuals(y_train, y_train_pred, y_test, y_test_pred, output_dir='../output/evaluation'):
     """
     Create residual analysis plots.
     
@@ -179,7 +179,7 @@ def visualize_residuals(y_train, y_train_pred, y_test, y_test_pred, output_dir='
     print(f"  → Saved: {output_dir}/02_residual_analysis.png")
 
 
-def create_metrics_table(metrics, output_dir='output/evaluation'):
+def create_metrics_table(metrics, output_dir='../output/evaluation'):
     """
     Create metrics comparison table.
     
@@ -223,7 +223,7 @@ def create_metrics_table(metrics, output_dir='output/evaluation'):
     print(f"  → Saved: {output_dir}/03_metrics_table.png")
 
 
-def analyze_feature_importance(model, feature_names, output_dir='output/evaluation'):
+def analyze_feature_importance(model, feature_names, output_dir='../output/evaluation'):
     """
     Analyze and display feature importance with visualizations.
     
@@ -257,7 +257,7 @@ def analyze_feature_importance(model, feature_names, output_dir='output/evaluati
     return feature_importance
 
 
-def plot_feature_importance(feature_importance, output_path='output/evaluation/04_feature_importance.png', top_n=15):
+def plot_feature_importance(feature_importance, output_path='../output/evaluation/04_feature_importance.png', top_n=15):
     """
     Create and save feature importance visualization.
     
